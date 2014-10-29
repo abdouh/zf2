@@ -5,14 +5,15 @@ return array(
         'invokables' => array(
             'Users\Controller\Index' => 'Users\Controller\IndexController',
             'Users\Controller\Register' => 'Users\Controller\RegisterController',
+            'Users\Controller\Login' => 'Users\Controller\LoginController',
         ),
     ),
     'router' => array(
         'routes' => array(
             'users' => array(
-                'type' => 'Literal',
+                'type' => 'Segment',
                 'options' => array(
-                    'route' => '/users',
+                    'route' => '/users[/]',
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id' => '[0-9]+',
@@ -29,7 +30,7 @@ return array(
                         'type' => 'Segment',
                         'options' => array(
                             'route' =>
-                            '/[:controller[/:action]]',
+                            '[:controller[/:action]]',
                             'constraints' => array(
                                 'controller' =>
                                 '[a-zA-Z][a-zA-Z0-9_-]*',
