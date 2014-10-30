@@ -18,8 +18,20 @@ return array(
         'driver_options' => array(
             PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
         ),
+        'adapters' => array(
+            'db1' => array(
+                'driver' => 'Pdo',
+                'dsn' => 'mysql:dbname=zf2tutorial;host=localhost',
+                'driver_options' => array(
+                    PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+                ),
+            ),
+        ),
     ),
     'service_manager' => array(
+        'abstract_factories' => array(
+            'Zend\Db\Adapter\AdapterAbstractServiceFactory',
+        ),
         'factories' => array(
             'Zend\Db\Adapter\Adapter'
             => 'Zend\Db\Adapter\AdapterServiceFactory',

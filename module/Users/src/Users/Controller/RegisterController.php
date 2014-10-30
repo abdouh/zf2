@@ -6,13 +6,15 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Users\Form\RegisterForm;
 use Users\Form\RegisterFilter;
+use Users\Model\User;
+use Users\Model\UserTable;
 
 class RegisterController extends AbstractActionController {
 
     public function indexAction() {
         $form = new RegisterForm();
         $viewModel = new ViewModel(array('form' =>
-            $form));
+                    $form));
         return $viewModel;
     }
 
@@ -20,7 +22,7 @@ class RegisterController extends AbstractActionController {
         if (!$this->request->isPost()) {
             return $this->redirect()->toRoute(NULL, array('controller' => 'register',
                         'action' => 'index'
-            ));
+                    ));
         }
         $post = $this->request->getPost();
         $form = new RegisterForm();
@@ -29,21 +31,31 @@ class RegisterController extends AbstractActionController {
         $form->setData($post);
         if (!$form->isValid()) {
             $model = new ViewModel(array(
-                'error' => true,
-                'form' => $form,
-            ));
+                        'error' => true,
+                        'form' => $form,
+                    ));
             $model->setTemplate('users/register/index');
             return $model;
         }
+        $this->createUser($form->getData());
         return $this->redirect()->toRoute(NULL, array(
                     'controller' => 'register',
                     'action' => 'confirm'
-        ));
+                ));
     }
 
     public function confirmAction() {
         $viewModel = new ViewModel();
         return $viewModel;
+    }
+
+    protected function createUser(array $data) {
+        $user = new User();
+        $user->exchangeArray($data);
+        $userTable = $this->getServiceLocator()->get('UserTable');
+        $userTable->saveUser($user);
+
+        return true;
     }
 
 }
