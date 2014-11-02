@@ -1,0 +1,17 @@
+<section class="user-manager">
+    <h2>Users</h2>
+    <table width="100%">
+        <thead>
+        <th width="20%">Name</th>
+        <th width="40%">Email</th>
+        <th></th>
+        </thead>
+        <tbody>
+            <?php foreach ($users as $user): ?>
+            <td><?= $user->name; ?></td>
+            <td><?= $user->email; ?></td>
+            <td><a>Edit </a>/<a> Delete</a></td>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+</section>

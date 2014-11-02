@@ -43,8 +43,7 @@ class Module {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new User());
-                    return new TableGateway('user', $dbAdapter, null,
-                                    $resultSetPrototype);
+                    return new TableGateway('user', $dbAdapter, null, $resultSetPrototype);
                 },
                 // FORMS
                 'LoginForm' => function ($sm) {
@@ -56,6 +55,9 @@ class Module {
                     $form = new \Users\Form\RegisterForm();
                     $form->setInputFilter($sm->get('RegisterFilter'));
                     return $form;
+                },
+                'UserEditForm' => function ($sm) {
+                    return $sm->get('RegisterForm');
                 },
                 // FILTERS
                 'LoginFilter' => function ($sm) {
