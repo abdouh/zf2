@@ -7,14 +7,15 @@ return array(
             'Users\Controller\Register' => 'Users\Controller\RegisterController',
             'Users\Controller\Login' => 'Users\Controller\LoginController',
             'Users\Controller\UserManager' => 'Users\Controller\UserManagerController',
+            'Users\Controller\UploadManager' => 'Users\Controller\UploadManagerController',
         ),
     ),
     'router' => array(
         'routes' => array(
             'users' => array(
-                'type' => 'Segment',
+                'type' => 'Literal',
                 'options' => array(
-                    'route' => '/users[/]',
+                    'route' => '/users',
                     'constraints' => array(
                         'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
                         'id' => '[0-9]+',
@@ -40,11 +41,24 @@ return array(
                             ),
                         ),
                     ),
+                    'upload-manager' => array(
+                        'type' => 'Segment',
+                        'options' => array(
+                            'route' => '/upload-manager[/:action[/:id]]',
+                            'constraints' => array(
+                                'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                                'id' => '[a-zA-Z0-9_-]*',),
+                            'defaults' => array(
+                                'controller' => 'Users\Controller\UploadManager',
+                                'action' => 'index',
+                            ),
+                        ),
+                    ),
                     'default' => array(
                         'type' => 'Segment',
                         'options' => array(
                             'route' =>
-                            '[:controller[/:action]]',
+                            '/[:controller[/:action]]',
                             'constraints' => array(
                                 'controller' =>
                                 '[a-zA-Z][a-zA-Z0-9_-]*',
@@ -63,5 +77,8 @@ return array(
         'template_path_stack' => array(
             'users' => __DIR__ . '/../view',
         ),
+    ),
+    'module_config' => array(
+        'upload_location' => __DIR__ . '/../data/uploads',
     ),
 );

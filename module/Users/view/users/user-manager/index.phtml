@@ -8,10 +8,15 @@
         </thead>
         <tbody>
             <?php foreach ($users as $user): ?>
-            <td><?= $user->name; ?></td>
-            <td><?= $user->email; ?></td>
-            <td><a>Edit </a>/<a> Delete</a></td>
-        <?php endforeach; ?>
+                <tr>    
+                    <td><?= $user->name; ?></td>
+                    <td><?= $user->email; ?></td>
+                    <td><a href="<?= $this->url('users/user-manager', array('action' => 'edit', 'id' => $user->id)); ?>">Edit </a>|<a href="<?= $this->url('users/user-manager', array('action' => 'delete', 'id' => $user->id)); ?>"> Delete</a></td>
+                </tr>
+            <?php endforeach; ?>
+            <tr>
+                <td colspan="3"><a href="<?= $this->url('users/user-manager', array('action' => 'add')); ?>">Add User</a></td>
+            </tr>
         </tbody>
     </table>
 </section>

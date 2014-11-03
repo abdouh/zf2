@@ -11,6 +11,12 @@ class RegisterForm extends Form {
         $this->setAttribute('method', 'post');
         $this->setAttribute('enctype', 'multipart/formdata');
         $this->add(array(
+            'name' => 'id',
+            'attributes' => array(
+                'type' => 'hidden',
+            ),
+        ));
+        $this->add(array(
             'name' => 'name',
             'attributes' => array(
                 'type' => 'text',
