@@ -1,0 +1,48 @@
+<section class="upload-manager">
+    <h2>Upload Sharing</h2>
+    <h4><?= $this->translate('Upload Info'); ?></h4>
+    <dl>
+        <dt>Label</dt>
+        <dd><?= $UploadInfo->label; ?></dd>
+        <dt>FileName</dt>
+        <dd><?= $UploadInfo->filename; ?></dd>
+    </dl>
+    <h4>Shared Users</h4>
+    <table width="100%">
+        <thead>
+        <th width="40%">Shared User</th>
+        <th>Actions</th>
+        </thead>
+        <tbody>
+            <?php foreach ($SharedUsers as $user): ?>
+                <tr>    
+                    <td><?= $user->name; ?></td>
+
+                    <td>
+                        <form id="delete_share" method="post" enctype="multipart/form-data" action="<?= $this->url(null, array('controller' => 'UploadManager', 'action' => 'deleteshare', 'id' => $user->id)); ?>">
+                            <input name="uploadId" type="hidden" value="<?= $UploadInfo->id; ?>">
+                        </form>
+                        <a onClick="getElementById('delete_share').submit();return false;" href="">Delete</a>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+    </table><br>
+    <h4>Add Sharing</h4>
+    <table width="100%">
+        <thead>
+        <th width="20%">Choose User:</th>
+        <th width="40%">
+        <form method="post" enctype="multipart/form-data" action="<?= $this->url(null, array('controller' => 'UploadManager', 'action' => 'saveshare')); ?>">
+            <input name="uploadId" type="hidden" value="<?= $UploadInfo->id; ?>">
+            <select name="shareduser" style="width:200px;">
+                <?php foreach ($Users as $user): ?>
+                    <option value="<?= $user->id; ?>"><?= $user->name; ?></option>
+                <?php endforeach; ?>
+            </select>
+            <input type="submit" value="Add Sharing">
+        </form>
+        </th>
+        </thead>
+    </table>
+</section>

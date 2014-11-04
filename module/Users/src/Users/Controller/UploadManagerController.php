@@ -19,8 +19,58 @@ class UploadManagerController extends AbstractActionController {
         // Get User Info from Session
         $userEmail = $this->getAuthService()->getStorage()->read();
         $user = $userTable->getUserByEmail($userEmail);
-        $viewModel = new ViewModel(array('myUploads' => $uploadTable->getUploadsByUserId($user->id)));
+        $shared = $uploadTable->getSharedUploadsForUserId($user->id);
+        $shared_uploads = array();
+        foreach ($shared as $index => $upload) {
+            $author_name = $userTable->getUser($upload->user_id);
+            $upload->author = $author_name->name;
+            $shared_uploads[] = $upload;
+        }
+        $viewModel = new ViewModel(array(
+                    'myUploads' => $uploadTable->getUploadsByUserId($user->id),
+                    'mySharedUploads' => $shared_uploads
+                ));
         return $viewModel;
+    }
+
+    public function shareAction() {
+        $uploadId = $this->params()->fromRoute('id');
+        $uploadTable = $this->getServiceLocator()->get('UploadTable');
+        $userTable = $this->getServiceLocator()->get('UserTable');
+        $users = $uploadTable->getSharedUsers($uploadId);
+        $shared_users = array();
+        foreach ($users as $user) {
+            $shared_users[] = $userTable->getUser($user->user_id);
+        }
+        $viewModel = new ViewModel(array(
+                    'UploadInfo' => $uploadTable->getUpload($uploadId),
+                    'Users' => $userTable->fetchAll(),
+                    'SharedUsers' => $shared_users
+                ));
+        return $viewModel;
+    }
+
+    public function saveshareAction() {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $UploadTable = $this->getServiceLocator()->get('UploadTable');
+            $data = $request->getPost();
+            $UploadTable->addSharing($data['uploadId'], $data['shareduser']);
+            return $this->redirect()->toRoute('users/upload-manager', array('action' => 'share', 'id' => $data['uploadId']));
+        }
+        return $this->redirect()->toRoute('users/upload-manager', array('action' => 'index'));
+    }
+
+    public function deleteshareAction() {
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $UploadTable = $this->getServiceLocator()->get('UploadTable');
+            $sharedUser = $this->params()->fromRoute('id');
+            $data = $request->getPost();
+            $UploadTable->removeSharing($data['uploadId'], $sharedUser);
+            return $this->redirect()->toRoute('users/upload-manager', array('action' => 'share', 'id' => $data['uploadId']));
+        }
+        return $this->redirect()->toRoute('users/upload-manager', array('action' => 'index'));
     }
 
     public function getFileUploadLocation() {
@@ -34,6 +84,24 @@ class UploadManagerController extends AbstractActionController {
         $form->bind(new Upload());
         $viewModel = new ViewModel(array('form' => $form));
         return $viewModel;
+    }
+
+    public function fileDownloadAction() {
+        $uploadId = $this->params()->fromRoute('id');
+        $uploadTable = $this->getServiceLocator()->get('UploadTable');
+        $upload = $uploadTable->getUpload($uploadId);
+        // Fetch Configuration from Module Config
+        $uploadPath = $this->getFileUploadLocation();
+        $file = file_get_contents($uploadPath . "/" . $upload->filename);
+        // Directly return the Response
+        $response = $this->getEvent()->getResponse();
+        $response->getHeaders()->addHeaders(array(
+            'Content-Type' => 'application/octet-stream',
+            'Content-Disposition' => 'attachment;filename="'
+            . $upload->filename . '"',
+        ));
+        $response->setContent($file);
+        return $response;
     }
 
     public function processAction() {

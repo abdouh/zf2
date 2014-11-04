@@ -5,6 +5,7 @@ namespace Users\Model;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\Sql\Select;
 
 class UploadTable {
 
@@ -57,6 +58,7 @@ class UploadTable {
 
     public function deleteUpload($id) {
         $this->tableGateway->delete(array('id' => $id));
+        $this->uploadSharingTableGateway->delete(array('upload_id' => $id));
     }
 
     public function addSharing($uploadId, $userId) {
@@ -84,8 +86,7 @@ class UploadTable {
     public function getSharedUploadsForUserId($userId) {
         $userId = (int) $userId;
         $rowset = $this->uploadSharingTableGateway->select(function (Select $select) use ($userId) {
-                    $select->columns(array())->where(array('uploads_sharing.user_id' => $userId))
-                            ->join('uploads', 'uploads_sharing.upload_id = uploads.id');
+                    $select->columns(array())->where(array('uploads_sharing.user_id' => $userId))->join('uploads', 'uploads_sharing.upload_id = uploads.id');
                 });
         return $rowset;
     }

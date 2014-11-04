@@ -1,22 +1,39 @@
-<section class="user-manager">
+<section class="upload-manager">
     <h2>User Uploads</h2>
     <table width="100%">
         <thead>
         <th width="20%">Label</th>
         <th width="40%">Filename</th>
-        <th></th>
+        <th>Actions</th>
         </thead>
         <tbody>
             <?php foreach ($myUploads as $upload): ?>
                 <tr>    
                     <td><?= $upload->label; ?></td>
-                    <td><?= $upload->filename; ?></td>
-                    <td><a href="<?= $this->url('users/upload-manager', array('action' => 'delete', 'id' => $upload->id)); ?>"> Delete</a></td>
+                    <td><a href="<?= $this->url('users/upload-manager', array('action' => 'filedownload', 'id' => $upload->id)); ?>"><?= $upload->filename; ?></a></td>
+                    <td><a href="<?= $this->url('users/upload-manager', array('action' => 'share', 'id' => $upload->id)); ?>">Share</a> | <a href="<?= $this->url('users/upload-manager', array('action' => 'delete', 'id' => $upload->id)); ?>">Delete</a></td>
                 </tr>
             <?php endforeach; ?>
             <tr>
                 <td colspan="3"><a href="<?= $this->url('users/upload-manager', array('action' => 'upload')); ?>">Add Upload</a></td>
             </tr>
+        </tbody>
+    </table>
+    <h2>Shared Uploads</h2>
+    <table width="100%">
+        <thead>
+        <th width="20%">Label</th>
+        <th width="40%">Filename</th>
+        <th>Shared by</th>
+        </thead>
+        <tbody>
+            <? foreach ($mySharedUploads as $upload): ?>
+                <tr>
+                    <td><?= $upload->label; ?></td>
+                    <td><a href="<?= $this->url('users/upload-manager', array('action' => 'filedownload', 'id' => $upload->id)); ?>"><?= $upload->filename; ?></a></td>
+                    <td><?= $upload->author; ?></td>
+                </tr>
+            <? endforeach; ?>
         </tbody>
     </table>
 </section>
