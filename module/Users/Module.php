@@ -10,8 +10,23 @@ use Users\Model\Upload;
 use Users\Model\UploadTable;
 use Zend\Authentication\AuthenticationService;
 use Zend\Authentication\Adapter\DbTable as DbTableAuthAdapter;
+use Zend\Mvc\MvcEvent;
 
 class Module {
+
+    /*public function onBootstrap($e) {
+        $eventManager = $e->getApplication()->getEventManager();
+        $moduleRouteListener = new ModuleRouteListener();
+        $moduleRouteListener->attach($eventManager);
+        $sharedEventManager = $eventManager->getSharedManager(); // The shared event manager
+        $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function($e) {
+                    $controller = $e->getTarget(); // The controller which is dispatched
+                    $controllerName = $controller->getEvent()->getRouteMatch()->getParam('controller');
+                    if (!in_array($controllerName, array('Users\Controller\Index', 'Users\Controller\Register', 'Users\Controller\Login'))) {
+                        $controller->layout('layout/myaccount');
+                    }
+                });
+    }*/
 
     public function getAutoloaderConfig() {
         return array(
@@ -62,6 +77,12 @@ class Module {
                 'UploadSharingTableGateway' => function ($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     return new TableGateway('uploads_sharing', $dbAdapter);
+                },
+                'ChatMessagesTableGateway' => function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new \Users\Model\ChatMessages());
+                    return new TableGateway('chat_messages', $dbAdapter, null, $resultSetPrototype);
                 },
                 // FORMS
                 'LoginForm' => function ($sm) {

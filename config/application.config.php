@@ -5,6 +5,7 @@ return array(
     'modules' => array(
         'Application',
         'Album',
+        'WebinoImageThumb',
         'Users',
     ),
     // These are various options for the listeners attached to the ModuleManager
