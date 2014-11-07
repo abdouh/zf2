@@ -13,20 +13,19 @@ use Zend\Authentication\Adapter\DbTable as DbTableAuthAdapter;
 use Zend\Mvc\MvcEvent;
 
 class Module {
-
-    /*public function onBootstrap($e) {
-        $eventManager = $e->getApplication()->getEventManager();
-        $moduleRouteListener = new ModuleRouteListener();
-        $moduleRouteListener->attach($eventManager);
-        $sharedEventManager = $eventManager->getSharedManager(); // The shared event manager
-        $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function($e) {
-                    $controller = $e->getTarget(); // The controller which is dispatched
-                    $controllerName = $controller->getEvent()->getRouteMatch()->getParam('controller');
-                    if (!in_array($controllerName, array('Users\Controller\Index', 'Users\Controller\Register', 'Users\Controller\Login'))) {
-                        $controller->layout('layout/myaccount');
-                    }
-                });
-    }*/
+    /* public function onBootstrap($e) {
+      $eventManager = $e->getApplication()->getEventManager();
+      $moduleRouteListener = new ModuleRouteListener();
+      $moduleRouteListener->attach($eventManager);
+      $sharedEventManager = $eventManager->getSharedManager(); // The shared event manager
+      $sharedEventManager->attach(__NAMESPACE__, MvcEvent::EVENT_DISPATCH, function($e) {
+      $controller = $e->getTarget(); // The controller which is dispatched
+      $controllerName = $controller->getEvent()->getRouteMatch()->getParam('controller');
+      if (!in_array($controllerName, array('Users\Controller\Index', 'Users\Controller\Register', 'Users\Controller\Login'))) {
+      $controller->layout('layout/myaccount');
+      }
+      });
+      } */
 
     public function getAutoloaderConfig() {
         return array(
@@ -83,6 +82,17 @@ class Module {
                     $resultSetPrototype = new ResultSet();
                     $resultSetPrototype->setArrayObjectPrototype(new \Users\Model\ChatMessages());
                     return new TableGateway('chat_messages', $dbAdapter, null, $resultSetPrototype);
+                },
+                'ImageUploadTable' => function($sm) {
+                    $tableGateway = $sm->get('ImageUploadTableGateway');
+                    $table = new \Users\Model\ImageUploadTable($tableGateway);
+                    return $table;
+                },
+                'ImageUploadTableGateway' => function ($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new \Users\Model\ImageUpload());
+                    return new TableGateway('image_uploads', $dbAdapter, null, $resultSetPrototype);
                 },
                 // FORMS
                 'LoginForm' => function ($sm) {

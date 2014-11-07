@@ -10,16 +10,15 @@ use Zend\Db\Sql\Select;
 class ImageUploadTable {
 
     protected $tableGateway;
-    protected $uploadSharingTableGateway;
 
-    public function __construct(TableGateway $tableGateway, TableGateway $uploadSharingTableGateway) {
+    public function __construct(TableGateway $tableGateway) {
         $this->tableGateway = $tableGateway;
-        $this->uploadSharingTableGateway = $uploadSharingTableGateway;
     }
 
-    public function saveUpload(Upload $upload) {
+    public function saveUpload(ImageUpload $upload) {
         $data = array(
             'filename' => $upload->filename,
+            'thumbnail' => $upload->thumbnail,
             'label' => $upload->label,
             'user_id' => $upload->user_id,
         );
@@ -58,37 +57,6 @@ class ImageUploadTable {
 
     public function deleteUpload($id) {
         $this->tableGateway->delete(array('id' => $id));
-        $this->uploadSharingTableGateway->delete(array('upload_id' => $id));
-    }
-
-    public function addSharing($uploadId, $userId) {
-        $data = array(
-            'upload_id' => (int) $uploadId,
-            'user_id' => (int) $userId,
-        );
-        $this->uploadSharingTableGateway->insert($data);
-    }
-
-    public function removeSharing($uploadId, $userId) {
-        $data = array(
-            'upload_id' => (int) $uploadId,
-            'user_id' => (int) $userId,
-        );
-        $this->uploadSharingTableGateway->delete($data);
-    }
-
-    public function getSharedUsers($uploadId) {
-        $uploadId = (int) $uploadId;
-        $rowset = $this->uploadSharingTableGateway->select(array('upload_id' => $uploadId));
-        return $rowset;
-    }
-
-    public function getSharedUploadsForUserId($userId) {
-        $userId = (int) $userId;
-        $rowset = $this->uploadSharingTableGateway->select(function (Select $select) use ($userId) {
-                    $select->columns(array())->where(array('uploads_sharing.user_id' => $userId))->join('uploads', 'uploads_sharing.upload_id = uploads.id');
-                });
-        return $rowset;
     }
 
 }
